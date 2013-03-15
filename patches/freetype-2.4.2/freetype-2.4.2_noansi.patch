@@ -1,0 +1,11 @@
+--- freetype-2.4.2/builds/unix/unix-cc.in.orig	2009-03-14 09:45:26.000000000 -0400
++++ freetype-2.4.2/builds/unix/unix-cc.in	2013-02-07 18:26:05.733730278 -0500
+@@ -82,7 +82,7 @@
+ 
+ # ANSIFLAGS: Put there the flags used to make your compiler ANSI-compliant.
+ #
+-ANSIFLAGS := @XX_ANSIFLAGS@
++ANSIFLAGS :=
+ 
+ # C compiler to use -- we use libtool!
+ #

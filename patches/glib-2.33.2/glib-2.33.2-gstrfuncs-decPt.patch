@@ -1,0 +1,26 @@
+--- glib-2.33.2/glib/gstrfuncs.c.orig	2013-02-11 16:53:22.972274457 -0500
++++ glib-2.33.2/glib/gstrfuncs.c	2013-02-11 17:05:05.463651459 -0500
+@@ -707,7 +707,11 @@
+   fail_pos = NULL;
+ 
+   locale_data = localeconv ();
++#ifdef KLAATU
++  decimal_point=".";
++#else
+   decimal_point = locale_data->decimal_point;
++#endif // KLAATU  decimal_point = locale_data->decimal_point;
+   decimal_point_len = strlen (decimal_point);
+ 
+   g_assert (decimal_point_len != 0);
+@@ -931,7 +935,11 @@
+   _g_snprintf (buffer, buf_len, format, d);
+ 
+   locale_data = localeconv ();
++#ifdef KLAATU
++  decimal_point=".";
++#else
+   decimal_point = locale_data->decimal_point;
++#endif // KLAATU  decimal_point = locale_data->decimal_point;
+   decimal_point_len = strlen (decimal_point);
+ 
+   g_assert (decimal_point_len != 0);

@@ -1,0 +1,16 @@
+--- freetype-2.4.2/autogen.sh.orig	2013-02-07 18:44:41.713732772 -0500
++++ freetype-2.4.2/autogen.sh	2013-02-07 18:45:01.713734471 -0500
+@@ -102,11 +102,11 @@
+   version=`$1 --version | head -1 | sed 's/([^)]*)/()/g' | cut -d ' ' -f $field`
+   version_check=`compare_to_minimum_version $version $4`
+   if test "$version_check"x = 0x; then
+-    echo "ERROR: Your version of the \`$2' tool is too old."
++    echo "WARNING: Your version of the \`$2' tool is too old."
+     echo "       Minimum version $4 is required (yours is version $version)."
+     echo "       Please upgrade or use the $3 variable to point to a more recent one."
+     echo ""
+-    exit 1
++    #exit 1
+   fi
+ }
+ 

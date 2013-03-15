@@ -1,0 +1,15 @@
+--- cairo-1.12.8/util/cairo-trace/trace.c.orig	2012-11-30 13:43:34.667456437 -0500
++++ cairo-1.12.8/util/cairo-trace/trace.c	2012-11-30 13:44:50.389694916 -0500
+@@ -533,7 +533,12 @@
+ 	d = 0.0;
+ 
+     locale_data = localeconv ();
++#ifdef KLAATU
++    decimal_point = ".";
++#else
+     decimal_point = locale_data->decimal_point;
++#endif // KLAATU
++
+     decimal_point_len = strlen (decimal_point);
+ 
+     /* Using "%f" to print numbers less than 0.1 will result in

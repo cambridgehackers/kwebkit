@@ -1,0 +1,15 @@
+--- glib-2.33.2/gio/gthreadedresolver.c.orig	2013-02-11 17:36:08.432541758 -0500
++++ glib-2.33.2/gio/gthreadedresolver.c	2013-02-11 17:32:36.443735620 -0500
+@@ -34,7 +34,11 @@
+ #include "gsimpleasyncresult.h"
+ #include "gsocketaddress.h"
+ 
+-
++#ifdef KLAATU
++#include <bionic/libc/private/arpa_nameser_compat.h>
++#include <bionic/libc/private/arpa_nameser.h>
++#endif // KLAATU
++ 
+ G_DEFINE_TYPE (GThreadedResolver, g_threaded_resolver, G_TYPE_RESOLVER)
+ 
+ static void threaded_resolver_thread (gpointer thread_data, gpointer pool_data);

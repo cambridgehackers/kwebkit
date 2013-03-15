@@ -1,0 +1,11 @@
+--- cairo-1.12.8/src/cairo-uninstalled.pc.in.orig	2013-02-13 16:35:11.833734473 -0500
++++ cairo-1.12.8/src/cairo-uninstalled.pc.in	2013-02-13 16:35:20.833734081 -0500
+@@ -2,7 +2,7 @@
+ Description: Multi-platform 2D graphics library
+ Version: @VERSION@
+ 
+-@PKGCONFIG_REQUIRES@: @CAIRO_REQUIRES@
++@PKGCONFIG_REQUIRES@: 
+ Libs: ${pc_top_builddir}/${pcfiledir}/src/libcairo.la
+ Libs.private: @CAIRO_NONPKGCONFIG_LIBS@
+ Cflags: -I${pc_top_builddir}/${pcfiledir}/@srcdir@/src

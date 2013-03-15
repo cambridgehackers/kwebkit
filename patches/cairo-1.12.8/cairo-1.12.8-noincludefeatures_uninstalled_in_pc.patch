@@ -1,0 +1,10 @@
+--- cairo-1.12.8/src/cairo-features-uninstalled.pc.in.orig	2013-02-13 16:18:05.353732980 -0500
++++ cairo-1.12.8/src/cairo-features-uninstalled.pc.in	2013-02-13 16:18:53.343731956 -0500
+@@ -2,6 +2,6 @@
+ Description: @FEATURE_NAME@ for cairo graphics library
+ Version: @VERSION@
+ 
+-Requires: @FEATURE_BASE@ @FEATURE_REQUIRES@
++Requires: 
+ Libs: @FEATURE_NONPKGCONFIG_LIBS@ @FEATURE_NONPKGCONFIG_EXTRA_LIBS@
+ Cflags: -I${pc_top_builddir}/${pcfiledir}/@srcdir@/src @FEATURE_NONPKGCONFIG_CFLAGS@

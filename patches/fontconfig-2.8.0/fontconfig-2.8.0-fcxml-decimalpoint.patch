@@ -1,0 +1,23 @@
+--- fontconfig-2.8.0.orig/src/fcxml.c	2009-11-16 17:46:18.000000000 -0500
++++ fontconfig-2.8.0/src/fcxml.c	2013-02-08 13:00:43.193733311 -0500
+@@ -1119,6 +1119,8 @@
+     char	    *dot;
+     double	    v;
+ 
++    // android does something similar in bionic/libc/stdlib/strtod.c
++#ifndef KLAATU
+     /*
+      * Have to swap the decimal point to match the current locale
+      * if that locale doesn't use 0x2e
+@@ -1159,7 +1161,10 @@
+ 	}
+     }
+     else
+-	v = strtod (s, end);
++      v = strtod (s, end);
++#else
++    v = strtod (s, end);
++#endif //KLAATU
+     return v;
+ }
+ 

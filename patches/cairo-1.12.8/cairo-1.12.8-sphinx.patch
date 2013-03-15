@@ -1,0 +1,40 @@
+--- cairo-1.12.8/util/cairo-sphinx/sphinx.c.orig	2012-11-30 14:04:27.989692652 -0500
++++ cairo-1.12.8/util/cairo-sphinx/sphinx.c	2012-11-30 14:47:24.919696403 -0500
+@@ -27,6 +27,9 @@
+ # error "cairo-sphinx needs real pthreads"
+ #endif
+ 
++
++#ifndef KLAATU
++
+ #define DATA_SIZE (256 << 20)
+ #define SHM_PATH_XXX "/shmem-cairo-sphinx"
+ 
+@@ -1488,7 +1491,7 @@
+     int ret = read (fd, &buf, 1);
+     return ret != 0;
+ }
+-
++#endif // KLAATU
+ int
+ main (int argc, char **argv)
+ {
+@@ -1496,6 +1499,10 @@
+     int len;
+     int fd;
+ 
++#ifdef KLAATU
++    fprintf(stderr,"No sphinx on klaatu, due to lack of posix shared mem \n see android_src//bionic/libc/docs/SYSV-IPC.TXT\n");
++#else
++
+     if (argc == 1)
+ 	return do_server ("/tmp/cairo-sphinx");
+ 
+@@ -1528,6 +1535,6 @@
+ 	len = snprintf (buf, sizeof (buf), "replay %s\n", argv[2]);
+ 	return ! writen (fd, buf, len);
+     }
+-
++#endif // KLAATU
+     return 0;
+ }

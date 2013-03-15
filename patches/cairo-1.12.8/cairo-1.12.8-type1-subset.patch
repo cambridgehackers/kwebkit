@@ -1,0 +1,14 @@
+--- cairo-1.12.8/src/cairo-type1-subset.c.orig	2012-11-30 13:41:41.307192111 -0500
++++ cairo-1.12.8/src/cairo-type1-subset.c	2012-11-30 13:42:19.289693622 -0500
+@@ -314,7 +314,11 @@
+     int decimal_point_len;
+ 
+     locale_data = localeconv ();
++#ifdef KLAATU
++    decimal_point = ".";
++#else
+     decimal_point = locale_data->decimal_point;
++#endif // KLAATU
+     decimal_point_len = strlen (decimal_point);
+ 
+     assert (decimal_point_len != 0);

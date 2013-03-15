@@ -1,0 +1,14 @@
+--- glib-2.33.2/gio/gresolver.c.orig	2013-02-11 17:10:05.463730559 -0500
++++ glib-2.33.2/gio/gresolver.c	2013-02-11 17:12:03.463731193 -0500
+@@ -33,6 +33,11 @@
+ #include "gsrvtarget.h"
+ #include "gthreadedresolver.h"
+ 
++#ifdef KLAATU
++#include <bionic/libc/private/arpa_nameser_compat.h>
++#include <bionic/libc/private/arpa_nameser.h>
++#endif // KLAATU
++
+ #ifdef G_OS_UNIX
+ #include <sys/stat.h>
+ #endif

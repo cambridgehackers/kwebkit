@@ -1,0 +1,16 @@
+--- fontconfig-2.8.0.orig/fc-glyphname/Makefile.am	2009-11-18 09:27:57.000000000 -0500
++++ fontconfig-2.8.0/fc-glyphname/Makefile.am	2013-02-08 12:52:10.193734773 -0500
+@@ -24,9 +24,12 @@
+ 
+ CC = @CC_FOR_BUILD@
+ EXEEXT = @EXEEXT_FOR_BUILD@
+-LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
++LINK = $(CCLD) $(AM_CFLAGS) $(BUILD_CFLAGS) $(AM_LDFLAGS) $(BUILD_LDFLAGS) -o $@
+ 
+ INCLUDES=-I${top_srcdir}/src -I${top_srcdir} $(WARN_CFLAGS)
++COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
++	$(BUILD_CPPFLAGS) $(AM_CFLAGS) $(BUILD_CFLAGS)
++
+ 
+ TMPL=fcglyphname.tmpl.h
+ STMPL=${top_srcdir}/fc-glyphname/${TMPL}

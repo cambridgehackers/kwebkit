@@ -1,0 +1,10 @@
+--- glib-2.33.2/glib/Makefile.am.orig	2013-02-12 13:22:05.343734454 -0500
++++ glib-2.33.2/glib/Makefile.am	2013-02-12 13:25:28.333732419 -0500
+@@ -216,6 +216,7 @@
+ 	gwakeup.h		\
+ 	gwakeup.c		\
+ 	gprintf.c		\
++	klaatu-stub.c           \
+ 	gprintfint.h
+ 
+ if OS_UNIX

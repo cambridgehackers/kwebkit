@@ -1,0 +1,15 @@
+--- glib-2.33.2/glib/gmain.c.orig	2013-02-11 18:58:27.863735246 -0500
++++ glib-2.33.2/glib/gmain.c	2013-02-11 19:00:15.863734294 -0500
+@@ -2026,7 +2026,11 @@
+   /* librt clock_gettime() is our first choice */
+   struct timespec ts;
+ 
+-#ifdef CLOCK_MONOTONIC
++#if defined (HAVE_PTHREAD_CONDATTR_SETCLOCK) && defined (CLOCK_MONOTONIC)
++  /* Don't use CLOCK_MONOTONIC unless pthread_condattr_setclock() is
++   * present. For details see:
++   * https://bugzilla.gnome.org/show_bug.cgi?id=673607
++   */
+   clock_gettime (CLOCK_MONOTONIC, &ts);
+ #else
+   clock_gettime (CLOCK_REALTIME, &ts);

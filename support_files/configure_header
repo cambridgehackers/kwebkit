@@ -1,0 +1,14 @@
+export ac_cv_header_grp_h=yes  
+export ac_cv_func_posix_getgrgid_r=no 
+export ac_cv_func_nonposix_getgrgid_r=no 
+export ac_cv_func_posix_getpwuid_r=no 
+export ac_cv_func_nonposix_getpwuid_r=no 
+export glib_cv_uscore=no 
+export glib_cv_stack_grows=no 
+# bug fix for broken configure in gnutls
+export with_p11_kit=no
+export PKG_CONFIG_PATH=${ANDROID_BUILD_TOP}/usr/local/lib/pkgconfig 
+
+
+
+

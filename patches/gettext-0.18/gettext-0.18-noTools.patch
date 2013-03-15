@@ -1,0 +1,11 @@
+--- gettext-0.18/Makefile.am.orig	2013-02-11 14:03:23.633179195 -0500
++++ gettext-0.18/Makefile.am	2013-02-11 14:03:37.133733327 -0500
+@@ -20,7 +20,7 @@
+ ACLOCAL = build-aux/fixaclocal @ACLOCAL@
+ ACLOCAL_AMFLAGS = -I m4
+ 
+-SUBDIRS = gnulib-local gettext-runtime gettext-tools
++SUBDIRS = gnulib-local gettext-runtime
+ 
+ EXTRA_DIST = \
+   version.sh DEPENDENCIES PACKAGING HACKING ChangeLog.0 autogen.sh \

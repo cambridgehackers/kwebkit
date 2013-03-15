@@ -1,0 +1,11 @@
+--- glib-2.33.2/configure.ac.orig	2013-02-11 16:51:12.983733163 -0500
++++ glib-2.33.2/configure.ac	2013-02-11 16:52:17.483730913 -0500
+@@ -210,7 +210,7 @@
+ if test "$glib_native_win32" != yes; then
+     # libtool option to control which symbols are exported
+     # right now, symbols starting with _ are not exported
+-    LIBTOOL_EXPORT_OPTIONS='-export-symbols-regex "^g.*"'
++    LIBTOOL_EXPORT_OPTIONS='-export-symbols-regex "^g.*|setpwent|localeconv"'
+ else
+     # We currently use .def files on Windows
+     LIBTOOL_EXPORT_OPTIONS=

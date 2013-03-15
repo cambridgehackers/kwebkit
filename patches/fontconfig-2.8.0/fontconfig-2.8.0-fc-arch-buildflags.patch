@@ -1,0 +1,15 @@
+--- fontconfig-2.8.0.orig/fc-arch/Makefile.am	2009-11-18 09:31:09.000000000 -0500
++++ fontconfig-2.8.0/fc-arch/Makefile.am	2013-02-08 12:52:34.693732783 -0500
+@@ -24,9 +24,11 @@
+ 
+ CC = @CC_FOR_BUILD@
+ EXEEXT = @EXEEXT_FOR_BUILD@
+-LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
++LINK = $(CCLD) $(AM_CFLAGS) $(BUILD_CFLAGS) $(AM_LDFLAGS) $(BUILD_LDFLAGS) -o $@
+ 
+ INCLUDES=-I${top_srcdir}/src -I${top_srcdir} $(WARN_CFLAGS)
++COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
++	$(BUILD_CPPFLAGS) $(AM_CFLAGS) $(BUILD_CFLAGS)
+ 
+ TMPL=fcarch.tmpl.h
+ STMPL=${top_srcdir}/fc-arch/fcarch.tmpl.h

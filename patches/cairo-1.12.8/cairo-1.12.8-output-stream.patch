@@ -1,0 +1,16 @@
+--- cairo-1.12.8/src/cairo-output-stream.c~  2010-07-12 04:57:03.000000000 -0400
++++ cairo-1.12.8/src/cairo-output-stream.c   2012-11-07 18:24:16.463060326 -0500
+@@ -313,7 +313,12 @@
+        d = 0.0;
+ 
+     locale_data = localeconv ();
++#ifdef KLAATU
++    decimal_point=".";
++#else
+     decimal_point = locale_data->decimal_point;
++#endif // KLAATU
++
+     decimal_point_len = strlen (decimal_point);
+ 
+     assert (decimal_point_len != 0);
+

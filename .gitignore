@@ -1,0 +1,11 @@
+.rcc
+*~
+*.o
+.moc
+.obj
+Makefile
+moc_*
+obj_*
+*.app
+kwebkit_build_dir
+kwebkit_src_downloads

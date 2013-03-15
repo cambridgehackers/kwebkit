@@ -1,0 +1,45 @@
+export CFLAGS="-g -O0 \
+-DKLAATU  \
+-DUSE_ARM_NEON -DUSE_ARM_SIMD \
+-march=armv7-a  -mfpu=neon -msoft-float -mthumb \
+-include limits.h \
+--sysroot=${ANDROID_BUILD_TOP} \
+-L${ANDROID_BUILD_TOP}/usr/local/lib \
+-fno-short-wchar -DU_USING_ICU_NAMESPACE=0 \
+-DU_GNUC_UTF16_STRING=0 -fno-short-enums \
+-D__STDC_INT64__"
+
+
+export CXXFLAGS="-frtti  -g -O0 \
+-DKLAATU  \
+-DUSE_ARM_NEON -DUSE_ARM_SIMD \
+-march=armv7-a  -mfpu=neon -msoft-float -mthumb \
+-include limits.h \
+-I${ANDROID_NDK_TOP}/sources/cxx-stl/gnu-libstdc++/4.6/include \
+-I${ANDROID_NDK_TOP}/sources/cxx-stl/gnu-libstdc++/4.6/libs/armeabi-v7a/include \
+-I${ANDROID_BUILD_TOP}/usr/include/bionic \
+-DANDROID \
+--sysroot=${ANDROID_BUILD_TOP} \
+-L${ANDROID_BUILD_TOP}/usr/local/lib \
+-fno-short-wchar  -DU_GNUC_UTF16_STRING=0 -fno-short-enums \
+-DU_USING_ICU_NAMESPACE=0 \
+-D__STDC_INT64__"
+
+# this is unlnown to arm-4.6 ndk gcc, sigh . -Wl,--reduce-memory-overheads \
+# turns out gold doesn't know it but bfd does
+# bfd requires we add -lm and -lstdc++...
+export LDFLAGS=" \
+-Wl,--reduce-memory-overheads \
+-Wl,--no-keep-memory \
+-Wl,--gc-sections -Wl,-z,nocopyreloc \
+-Wl,--no-undefined -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now \
+--sysroot=${ANDROID_BUILD_TOP} \
+-L${ANDROID_BUILD_TOP}/usr/local/lib \
+-L${ANDROID_NDK_TOP}/sources/cxx-stl/gnu-libstdc++/4.6/libs/armeabi-v7a \
+-lgnustl_shared \
+-lm \
+-lstdc++ \
+-g "
+
+
+export DEFAULT_LIBS=" -L${ANDROID_NDK_TOP}/sources/cxx-stl/gnu-libstdc++/4.6/libs/armeabi-v7a  -lgnustl_shared ${ANDROID_NDK_TOP}/sources/cxx-stl/gnu-libstdc++/4.6/libs/armeabi-v7a/libsupc++.a"

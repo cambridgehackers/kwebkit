@@ -1,0 +1,24 @@
+--- icu/source/tools/toolutil/pkg_genc.c.orig	2013-02-13 13:17:52.512331039 -0500
++++ icu/source/tools/toolutil/pkg_genc.c	2013-02-13 13:18:09.013735672 -0500
+@@ -5,6 +5,21 @@
+  */
+ #include "unicode/utypes.h"
+ 
++#ifdef KLAATU
++// stolen from x86 linux
++/* How to extract and insert information held in the st_info field.  */
++
++#define ELF32_ST_BIND(val)(((unsigned char) (val)) >> 4)
++#define ELF32_ST_TYPE(val)((val) & 0xf)
++#define ELF32_ST_INFO(bind, type)(((bind) << 4) + ((type) & 0xf))
++
++/* Both Elf32_Sym and Elf64_Sym use the same one-byte st_info field.  */
++#define ELF64_ST_BIND(val)ELF32_ST_BIND (val)
++#define ELF64_ST_TYPE(val)ELF32_ST_TYPE (val)
++#define ELF64_ST_INFO(bind, type)ELF32_ST_INFO ((bind), (type))
++#define ELF64_ST_INFO(bind, type)ELF32_ST_INFO ((bind), (type))
++#endif
++
+ #ifdef U_WINDOWS
+ #   define VC_EXTRALEAN
+ #   define WIN32_LEAN_AND_MEAN

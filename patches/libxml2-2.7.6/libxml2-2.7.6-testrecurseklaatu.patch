@@ -1,0 +1,23 @@
+--- libxml2-2.7.6.orig/testrecurse.c	2009-09-24 11:32:00.000000000 -0400
++++ libxml2-2.7.6/testrecurse.c	2013-02-07 21:57:09.033738638 -0500
+@@ -10,6 +10,15 @@
+  * daniel@veillard.com
+  */
+ 
++#ifdef KLAATU
++//no glob.h
++#include <stdio.h>
++int main (){
++  printf("not supported in klaatu\n");
++}
++#else
++
++
+ #ifdef HAVE_CONFIG_H
+ #include "libxml.h"
+ #else
+@@ -971,3 +980,4 @@
+ 
+     return(ret);
+ }
++#endif // KLAATU

@@ -1,0 +1,11 @@
+--- cairo-1.12.8/build/configure.ac.system.orig	2013-02-13 16:06:40.863171326 -0500
++++ cairo-1.12.8/build/configure.ac.system	2013-02-13 16:06:52.363736308 -0500
+@@ -120,7 +120,7 @@
+ 	      [AC_MSG_CHECKING([mkdir variant])
+ 	      mkdir_variant="unknown"
+ 	      save_CFLAGS="$CFLAGS"
+-	      CFLAGS=$WARN_CFLAGS
++	      CFLAGS=$CFLAGS
+ 	      AC_TRY_COMPILE([
+ #ifdef HAVE_SYS_STAT_H
+ #include <sys/stat.h>

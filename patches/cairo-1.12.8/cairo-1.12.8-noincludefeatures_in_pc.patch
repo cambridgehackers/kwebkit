@@ -1,0 +1,10 @@
+--- cairo-1.12.8/src/cairo-features.pc.in.orig	2013-02-13 16:18:13.352331763 -0500
++++ cairo-1.12.8/src/cairo-features.pc.in	2013-02-13 16:18:31.843732984 -0500
+@@ -7,6 +7,6 @@
+ Description: @FEATURE_NAME@ for cairo graphics library
+ Version: @VERSION@
+ 
+-Requires: @FEATURE_BASE@ @FEATURE_REQUIRES@
++Requires: 
+ Libs: @FEATURE_NONPKGCONFIG_LIBS@ @FEATURE_NONPKGCONFIG_EXTRA_LIBS@
+ Cflags: -I${includedir}/cairo @FEATURE_NONPKGCONFIG_CFLAGS@

@@ -1,0 +1,37 @@
+# run this by:
+# source /data/usr/local/bin/KlaatuPhoneEnvSet
+echo "setting env variables"
+export XDG_CACHE_HOME=/cache/xdg
+export LD_LIBRARY_PATH=/data/usr/lib/:/data/usr/local/lib
+export HOME=/cache/xdg
+export TMPDIR=/cache/xdg
+export BAVERY_DEBUG_WEBPROCESS=1
+export XDG_RUNTIME_DIR=/cache/xdg
+export FONTCONFIG_FILE=/data/usr/local/etc/fonts/fonts.conf
+export GIO_EXTRA_MODULES=/data/usr/local/lib/gio/modules
+
+
+# run the things we need to run
+echo "running fc-cache"
+/data/usr/local/bin/fc-cache
+
+echo "setting up the webkit testing crosslinks"
+mount -o rw,remount / /
+mkdir -p /home/bavery/work/pandroid/sigynPostAndy/ndk_webkit_build/
+cd /home/bavery/work/pandroid/sigynPostAndy/ndk_webkit_build/
+ln -s /data/usr/webkit-nix/ .
+mkdir -p  /home/bavery/work/pandroid/sigynPostAndy/ndk_webkit_build/webkit-nix/WebKitBuild/ByHand.kwebkit/ 
+cd  /home/bavery/work/pandroid/sigynPostAndy/ndk_webkit_build/webkit-nix/WebKitBuild/ByHand.kwebkit/
+ln -s /data/usr/local/lib/ .
+cd /system/etc
+ln -s /data/usr/local/etc/ssl .
+
+echo "setting up the mime dbase cross link"
+mkdir -p /usr/share
+cd /usr/share
+ln -s /data/usr/mime .
+
+
+cd /data/usr
+
+

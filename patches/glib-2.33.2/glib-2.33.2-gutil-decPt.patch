@@ -1,0 +1,19 @@
+--- glib-2.33.2/glib/gutils.c.orig	2013-02-11 17:08:16.963732511 -0500
++++ glib-2.33.2/glib/gutils.c	2013-02-11 17:09:42.463733860 -0500
+@@ -837,6 +837,7 @@
+       {
+ 	g_user_name = g_strdup (pw->pw_name);
+ 
++#ifndef KLAATU
+ 	if (pw->pw_gecos && *pw->pw_gecos != '\0') 
+ 	  {
+ 	    gchar **gecos_fields;
+@@ -850,7 +851,7 @@
+ 	    g_strfreev (gecos_fields);
+ 	    g_strfreev (name_parts);
+ 	  }
+-
++#endif // KLAATU
+ 	if (!g_home_dir)
+ 	  g_home_dir = g_strdup (pw->pw_dir);
+       }

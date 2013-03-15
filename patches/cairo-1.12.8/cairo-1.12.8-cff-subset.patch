@@ -1,0 +1,14 @@
+--- cairo-1.12.8/src/cairo-cff-subset.c.orig	2012-11-30 13:36:56.377191510 -0500
++++ cairo-1.12.8/src/cairo-cff-subset.c	2012-11-30 13:38:15.889695152 -0500
+@@ -306,7 +306,11 @@
+     char *buf_end = buffer + sizeof (buffer);
+ 
+     locale_data = localeconv ();
++#ifdef KLAATU
++    decimal_point = ".";
++#else
+     decimal_point = locale_data->decimal_point;
++#endif //KLAATU
+     decimal_point_len = strlen (decimal_point);
+ 
+     assert (decimal_point_len != 0);
