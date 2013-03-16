@@ -13,4 +13,12 @@ HACKS:
 Getting it to work on a 12.04 is a (not hard) TODO...
 
 
-Also, this assumes you jave a fully built klaatu dir and have lunched!
+Steps:
+1) build AOSP (you need all the libs)
+The following MUST be done from the shell you lunched in.
+2) run klaatu-manifests/script/makeusr (you need a linux friendly sysroot to build against)
+3) run dloadPkgs.sh  (grabs the packages webkit nix relies on as well as nix itself)
+4) run buildBasePkgs.sh (builds them in the "right" order)
+
+
+
