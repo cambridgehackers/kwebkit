@@ -1,6 +1,6 @@
 #!/bin/sh
 
-#set +x
+#set -x
 #set +k
 # this is so the cmd results are grabbed not hte result of the pipe
 set -o pipefail
@@ -119,6 +119,25 @@ function untarTry {
 
 
 }
+# and nix is special
+function buildWebKitNix {
+    KLAATU_LOCAL_PKG=$1
+    KLAATU_LOCAL_PKG_BUILDDIR=$KLAATU_LOCAL_PKG/WebKitBuild/kwebkit
+
+    untarTry $KLAATU_LOCAL_PKG
+    cd $KLAATU_BUILDDIR/$KLAATU_LOCAL_PKG
+    echo "**** Working on $KLAATU_LOCAL_PKG ****"
+    mkdir -p WebKitBuild/kwebkit
+    # for debugging issues
+    printenv | tee WebKitBuild/kwebkit/kwebkit_env_used_to_build
+    cmdTryDeluxe cmake_webkitnix_build_cmd $KLAATU_LOCAL_PKG_BUILDDIR  "" cmake
+    cmdTryDeluxe make $KLAATU_LOCAL_PKG_BUILDDIR "${KLAATU_NUMJOBS} ${KLAATU_VERBOSE}" make
+    rsync -a bin/ ${ANDROID_BUILD_TOP}/usr/local/bin/
+    rsync -a lib/ ${ANDROID_BUILD_TOP}/usr/local/lib/
+    echo
+}
+
+
 # and some packages can only run configure....
 function buildTryNoreconf {
     KLAATU_LOCAL_PKG=$1
@@ -458,3 +477,18 @@ tar xf ${KLAATU_SUPPORTDIR}/ca-certs.tar.bz2 -C ${ANDROID_BUILD_TOP}/usr/local/e
 
 # KlaatuPhoneEnvSet
 rsync -a  ${KLAATU_SUPPORTDIR}/KlaatuPhoneEnvSet ${ANDROID_BUILD_TOP}/usr/local/bin
+
+# webkit nix. very very special case
+export CFLAGS="$KLAATU_CFLAGS_ORIG  "
+export CXXFLAGS="$KLAATU_CXXFLAGS_ORIG "
+export LDFLAGS="$KLAATU_LDFLAGS_ORIG"
+echo "LDFLAGS I am using are: $LDFLAGS"
+# the complicated cmake command is in the supportdir
+# also, cmake loves to find the build tools in the outmoded 
+# ndk or aosp path so we need a clean path for the build
+# we put /usr/local first to allow you to shadow less desirable
+# versions
+export PATH="/usr/local/bin:/bin:/usr/sbin:/usr/bin:`dirname ${KLAATU_TC}`:.:$KLAATU_SUPPORTDIR"
+WEBKITNIX_BRANCH=`cat $KLAATU_SUPPORTDIR/WebKitNixBranch | head -1`
+buildWebKitNix webkitnix-${WEBKITNIX_BRANCH}
+export PATH=$KLAATU_PATH_ORIG
