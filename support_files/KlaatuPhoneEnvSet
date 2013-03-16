@@ -16,7 +16,8 @@ echo "running fc-cache"
 /data/usr/local/bin/fc-cache
 
 echo "setting up the webkit testing crosslinks"
-mount -o rw,remount / /
+mount -o rw,remount / 
+mount -o rw,remount /system
 mkdir -p /home/bavery/work/pandroid/sigynPostAndy/ndk_webkit_build/
 cd /home/bavery/work/pandroid/sigynPostAndy/ndk_webkit_build/
 ln -s /data/usr/webkit-nix/ .
