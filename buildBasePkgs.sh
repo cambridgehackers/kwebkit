@@ -11,7 +11,7 @@ set -o pipefail
 #3) cmake >= 2.8.7
 #4) qemu-arm-static >= 1.2.0
 
-
+export SCRIPT_DIR="$( cd "$( dirname "$0" )" && pwd )"
 
 # set this to what you want
 KLAATU_NUMJOBS="-j20"
@@ -19,7 +19,8 @@ KLAATU_VERBOSE="V=1"
 
 
 #
-KLAATU_TOPDIR=`pwd`
+KLAATU_TOPDIR=$SCRIPT_DIR
+#`pwd`
 KLAATU_TMPDIR=`pwd`;
 KLAATU_SUPPORTDIR=$KLAATU_TOPDIR/support_files
 KLAATU_INFODIR=kwebkit_progress
@@ -37,7 +38,7 @@ function cmdCheck {
     KLAATU_LOCALCC_CMD=$3
 
     if [ $KLAATU_LOCALCC_RESULT -gt 0 ]; then
-	echo "$KLAATU_LOCAL_CMD failed $KLAATU_LOCAL_PKG"
+	echo "$KLAATU_LOCALCC_CMD failed $KLAATU_LOCAL_PKG"
 	#patches check this xple times
 	rm -f ${KLAATU_INFODIR}/kwebkit_${KLAATU_LOCALCC_CMD}.compleat
 	exit 1
@@ -73,7 +74,11 @@ function cmdTry {
 	if [ -f $KLAATU_LOCALCT_CMD -a  ! -x $KLAATU_LOCALCT_CMD ]; then
 	    chmod a+x $KLAATU_LOCALCT_CMD
 	fi
-	${KLAATU_LOCALCT_CMD} $KLAATU_LOCALCT_ARGS 2>&1 | tee  ${KLAATU_INFODIR}/kwebkit_${KLAATU_LOCALCT_CMD}.log
+	KLAATU_LOCALCT_LOG=${KLAATU_INFODIR}/kwebkit_${KLAATU_LOCALCT_CMD}.log
+	if [ -f $KLAATU_LOCALCT_CMD ]; then
+	    KLAATU_LOCALCT_CMD="./$1"
+	fi
+	${KLAATU_LOCALCT_CMD} $KLAATU_LOCALCT_ARGS 2>&1 | tee  $KLAATU_LOCALCT_LOG
 	cmdCheck $? $KLAATU_LOCALCT_PKG $KLAATU_LOCALCT_CMD	
     else
 	echo "$KLAATU_LOCALCT_CMD has already been run for $KLAATU_LOCALCT_PKG"
@@ -399,7 +404,7 @@ buildTryAutoreconf gnutls-2.12.20 " --disable-silent-rules --disable-gtk-doc-htm
 export CFLAGS="$KLAATU_CFLAGS_ORIG  "
 export CXXFLAGS="$KLAATU_CXXFLAGS_ORIG "
 export LDFLAGS="$KLAATU_LDFLAGS_ORIG"
-buildTryNoreconf glib-networking-2.33.2 " --disable-silent-rules --disable-nls --disable-glibtest --disable-gcov "
+buildTryNoreconf glib-networking-2.33.2 " --disable-silent-rules --disable-nls --disable-glibtest --disable-gcov --with-libproxy=no"
 
 # icu4c-4_8_1_1
 # this is the weirdest build we have.
@@ -418,7 +423,7 @@ export CXXFLAGS="$KLAATU_CXXFLAGS_ORIG "
 # bfd needs more explicit libs added
 export LDFLAGS="$KLAATU_LDFLAGS_ORIG -lglib-2.0 -lintl -liconv -lGLESv2 -llog -lcutils -lEGL -lutils -lGLES_trace -lcorkscrew -lz -lstlport -lgccdemangle"
 # needs to be autoreconfed since one of the patches is to an ac file.
-buildTryAutoreconf  cairo-1.12.8 " --enable-tee  --enable-glesv2 "
+buildTryAutoreconf  cairo-1.12.8 " --enable-tee  --enable-glesv2 --with-x=no"
 
 
 # harfbuzz
