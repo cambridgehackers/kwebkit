@@ -423,7 +423,7 @@ export CXXFLAGS="$KLAATU_CXXFLAGS_ORIG "
 # bfd needs more explicit libs added
 export LDFLAGS="$KLAATU_LDFLAGS_ORIG -lglib-2.0 -lintl -liconv -lGLESv2 -llog -lcutils -lEGL -lutils -lGLES_trace -lcorkscrew -lz -lstlport -lgccdemangle"
 # needs to be autoreconfed since one of the patches is to an ac file.
-buildTryAutoreconf  cairo-1.12.8 " --enable-tee  --enable-glesv2 --with-x=no"
+buildTryAutoreconf  cairo-1.12.8 " --enable-tee  --enable-glesv2 --with-x=no --enable-xlib=no --enable-xcb=no"
 
 
 # harfbuzz
