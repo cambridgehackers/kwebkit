@@ -134,7 +134,7 @@ function buildWebKitNix {
     echo "**** Working on $KLAATU_LOCAL_PKG ****"
     mkdir -p WebKitBuild/kwebkit
     # for debugging issues
-    printenv | tee WebKitBuild/kwebkit/kwebkit_env_used_to_build
+    #printenv | tee WebKitBuild/kwebkit/kwebkit_env_used_to_build
     cmdTryDeluxe cmake_webkitnix_build_cmd $KLAATU_LOCAL_PKG_BUILDDIR  "" cmake
     cmdTryDeluxe make $KLAATU_LOCAL_PKG_BUILDDIR "${KLAATU_NUMJOBS} ${KLAATU_VERBOSE}" make
     rsync -a bin/ ${ANDROID_BUILD_TOP}/usr/local/bin/
@@ -268,7 +268,7 @@ if [ ! -e ${KLAATU_SUPPORTDIR}/make_header ]; then
     exit -1
 fi
 
-if [ ! -e ${KLAATU_SUPPORTDIR}/ca-certs.tar.bz2 ]; then
+if [ ! -e ${KLAATU_SUPPORTDIR}/ca-certs-ubuntu-12.04.tar.bz2 ]; then
     echo "missing the ca-certs tarball..."
     exit -1
 fi
@@ -477,8 +477,9 @@ export LD_LIBRARY_PATH_ORIG=$KLAATU_LD_LIBRARY_PATH_ORIG
 # ca-certs
 # talk about hacks.  this is just swiped from an Ubuntu 12.04 workstation.
 echo "**** Working on ca-certs HACK ****"
-mkdir -p -p ${ANDROID_BUILD_TOP}/usr/local/etc/ssl
-tar xf ${KLAATU_SUPPORTDIR}/ca-certs.tar.bz2 -C ${ANDROID_BUILD_TOP}/usr/local/etc/ssl
+mkdir -p ${ANDROID_BUILD_TOP}/usr/local/etc/ssl
+mkdir -p ${ANDROID_BUILD_TOP}/usr/local/share
+tar xf ${KLAATU_SUPPORTDIR}/ca-certs-ubuntu-12.04.tar.bz2 -C ${ANDROID_BUILD_TOP}/usr/local
 
 # KlaatuPhoneEnvSet
 rsync -a  ${KLAATU_SUPPORTDIR}/KlaatuPhoneEnvSet ${ANDROID_BUILD_TOP}/usr/local/bin

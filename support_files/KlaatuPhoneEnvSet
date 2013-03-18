@@ -29,10 +29,17 @@ ln -s /data/usr/local/etc/ssl .
 
 echo "setting up the mime dbase cross link"
 mkdir -p /usr/share
+mkdir -p /data/usr/local/share/mime
 cd /usr/share
-ln -s /data/usr/mime .
+ln -s /data/usr/local/share/mime .
+
+echo "setting up theca-certificates cross link"
+mkdir -p /usr/share
+mkdir -p /data/usr/local/share/ca-certificates
+cd /usr/share
+ln -s /data/usr/local/share/ca-certificates .
 
 
-cd /data/usr
+
 
 
