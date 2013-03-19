@@ -304,7 +304,7 @@ buildTry libpng-1.2.50
 export CFLAGS=" -DPIXMAN_NO_TLS -include pixman-extra/pixman-elf-fix.h $KLAATU_CFLAGS_ORIG "
 export CXXFLAGS=" -DPIXMAN_NO_TLS $KLAATU_CXXFLAGS_ORIG"
 export LDFLAGS="$KLAATU_LDFLAGS_ORIG"
-buildTry pixman-0.24.0  "--disable-arm-iwmmxt"
+buildTry pixman-0.24.0  "--disable-arm-iwmmxt --enable-gtk=no"
 
 # freetype-2.4.2
 # isn't standard. sigh
