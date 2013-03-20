@@ -131,6 +131,7 @@ function buildWebKitNix {
 
     untarTry $KLAATU_LOCAL_PKG
     cd $KLAATU_BUILDDIR/$KLAATU_LOCAL_PKG
+    #sed -i.001 -e "s/-Wl,--reduce-memory-overheads//" override.cmake
     echo "**** Working on $KLAATU_LOCAL_PKG ****"
     mkdir -p WebKitBuild/kwebkit
     # for debugging issues
