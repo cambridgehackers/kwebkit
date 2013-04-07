@@ -43,7 +43,7 @@ function cmdCheck {
 	rm -f ${KLAATU_INFODIR}/kwebkit_${KLAATU_LOCALCC_CMD}.compleat
 	exit 1
     fi
-    touch ${KLAATU_INFODIR}/kwebkit_${KLAATU_LOCALCC_CMD}.compleat
+    touch ${KLAATU_INFODIR}/kwebkit_${KLAATU_LOCALCC_CMD#./}.compleat
  
 }  
 
@@ -131,7 +131,10 @@ function buildWebKitNix {
 
     untarTry $KLAATU_LOCAL_PKG
     cd $KLAATU_BUILDDIR/$KLAATU_LOCAL_PKG
-    #sed -i.001 -e "s/-Wl,--reduce-memory-overheads//" override.cmake
+    # comment out the following line if you are using the bfd linker rather than 
+    # the std gold linker. You only need to do this if building webkitnix
+    # -O0 -g
+    sed -i.001 -e "s/-Wl,--reduce-memory-overheads//" override.cmake
     echo "**** Working on $KLAATU_LOCAL_PKG ****"
     mkdir -p WebKitBuild/kwebkit
     # for debugging issues
@@ -242,22 +245,30 @@ if [ "$ANDROID_BUILD_TOP" == "" ]; then
     exit -1;
 fi
 
+
 KLAATU_TC=`which arm-linux-gcc`;
 
 if [ "$KLAATU_TC" == "" ]; then
-    echo "
+    export PATH=$PATH:${KLAATU_TOPDIR}/toolchain/arm-linux-androideabi-4.6/prebuilt/linux-x86/niceBin
+    KLAATU_TC=`which arm-linux-gcc`;
+    if [ "$KLAATU_TC" == "" ]; then
+	echo "
+I can't find the toolchain with links like arm-linux-gcc in it. It should be in the local toolchain dir.
+If you are trying to use an outside ndk toolchain you need to:
 You need to set up your toolchain to have softlinks of the form arm-linux-xxx
 I am currently targetting the android-ndk-r8d gcc 4.6 toolchain so I have a 
 'niceBin' with links in it like :
 android-ndk-r8d/toolchains/arm-linux-androideabi-4.6/prebuilt/linux-x86/niceBin/arm-linux-gcc -> ../bin/arm-linux-androideabi-gcc
 for the whole toolchain.  This makes configure happy even with older packages that don't necessarily recognize the quad format.
 "
-    exit -1;
+	exit -1;
+    fi
 fi
 
 if [ "$ANDROID_NDK_TOP" == "" ]; then
-    echo "need to set ANDROID_NDK_TOP since this is an ndk based build now"
-    exit -1
+    export ANDROID_NDK_TOP=${KLAATU_TOPDIR}/toolchain
+else
+    echo "WARNING: you already have an ANDROID_NDK_TOP set. This should only be done if you are trying out a new ndk release"
 fi
 
 if [ ! -e ${KLAATU_SUPPORTDIR}/configure_header ]; then
@@ -279,6 +290,14 @@ if [ ! -e ${KLAATU_SUPPORTDIR}/KlaatuPhoneEnvSet ]; then
     exit -1
 fi
 
+# So, we are currently using gnustl_shared as our C++ runtime.
+# for more information on this see android-ndk-r8d/docs/CPLUSPLUS-SUPPORT.html
+if [ ! -e  ${ANDROID_BUILD_TOP}/usr/local/lib/libgnustl_shared.so ]; then
+    echo "copying in the needed c++ runtime library libgnustl_shared.so from the NDK"
+    echo "we are using the sources/cxx-stl/gnu-libstdc++/4.6/libs/armeabi-v7a/libgnustl_shared.so version"
+    mkdir -p ${ANDROID_BUILD_TOP}/usr/local/lib/
+    cp ${ANDROID_NDK_TOP}/sources/cxx-stl/gnu-libstdc++/4.6/libs/armeabi-v7a/libgnustl_shared.so ${ANDROID_BUILD_TOP}/usr/local/lib/
+fi
 
 mkdir -p $KLAATU_BUILDDIR
 # the build is VERY order dependent
@@ -290,13 +309,14 @@ KLAATU_CFLAGS_ORIG=$CFLAGS
 KLAATU_CXXFLAGS_ORIG=$CXXFLAGS
 KLAATU_LDFLAGS_ORIG=$LDFLAGS
 KLAATU_PATH_ORIG=$PATH
-KLAATU_LD_LIBRARY_PATH_ORIG=$LD_LIBRARY_PATH
+KLAATU_LD_LIBRARY_PATH_ORIG=${ANDROID_BUILD_TOP}/usr/local/lib:${ANDROID_BUILD_TOP}/usr/lib
 
+
+export LD_LIBRARY_PATH="$KLAATU_LD_LIBRARY_PATH_ORIG"
 #  libpng
 export CFLAGS="$KLAATU_CFLAGS_ORIG "
 export CXXFLAGS="$KLAATU_CXXFLAGS_ORIG"
 export LDFLAGS="$KLAATU_LDFLAGS_ORIG"
-
 buildTry libpng-1.2.50
 
 
@@ -304,7 +324,7 @@ buildTry libpng-1.2.50
 #  pixman-0.24
 export CFLAGS=" -DPIXMAN_NO_TLS -include pixman-extra/pixman-elf-fix.h $KLAATU_CFLAGS_ORIG "
 export CXXFLAGS=" -DPIXMAN_NO_TLS $KLAATU_CXXFLAGS_ORIG"
-export LDFLAGS="$KLAATU_LDFLAGS_ORIG"
+export LDFLAGS="$KLAATU_LDFLAGS_ORIG -lz"
 buildTry pixman-0.24.0  "--disable-arm-iwmmxt --enable-gtk=no"
 
 # freetype-2.4.2
@@ -312,6 +332,9 @@ buildTry pixman-0.24.0  "--disable-arm-iwmmxt --enable-gtk=no"
 export CFLAGS="$KLAATU_CFLAGS_ORIG "
 export CXXFLAGS="$KLAATU_CXXFLAGS_ORIG"
 export LDFLAGS="$KLAATU_LDFLAGS_ORIG"
+# the configure for freetype is pathetic.  It relies on being *unable* to run the 
+# arm binaries as a way to test if we are cross compiling. The bozos...
+export LD_LIBRARY_PATH=""
 untarTry freetype-2.4.2
 echo "**** Working on freetype-2.4.2 ****"
 cmdTryPatch patch freetype-2.4.2
@@ -335,6 +358,8 @@ buildTry libxslt-1.1.26 " --with-libxml-prefix=${ANDROID_BUILD_TOP}/usr/local  -
 export CFLAGS="$KLAATU_CFLAGS_ORIG "
 export CXXFLAGS="$KLAATU_CXXFLAGS_ORIG"
 export LDFLAGS="$KLAATU_LDFLAGS_ORIG"
+# needs freetype-config
+export PATH="$PATH:${ANDROID_BUILD_TOP}/usr/local/bin"
 buildTry fontconfig-2.8.0  " --with-arch=arm --with-cache-dir=/data/usr/local/fontconfig-cache --with-default-fonts=/data/usr/local/share/fonts"
 
 # libffi
@@ -405,6 +430,8 @@ buildTryAutoreconf gnutls-2.12.20 " --disable-silent-rules --disable-gtk-doc-htm
 export CFLAGS="$KLAATU_CFLAGS_ORIG  "
 export CXXFLAGS="$KLAATU_CXXFLAGS_ORIG "
 export LDFLAGS="$KLAATU_LDFLAGS_ORIG"
+export LD_LIBRARY_PATH="$KLAATU_LD_LIBRARY_PATH_ORIG"
+echo "ldflags = $LDFLAGS"
 buildTryNoreconf glib-networking-2.33.2 " --disable-silent-rules --disable-nls --disable-glibtest --disable-gcov --with-libproxy=no"
 
 # icu4c-4_8_1_1
@@ -423,6 +450,7 @@ export CXXFLAGS="$KLAATU_CXXFLAGS_ORIG "
 #export LDFLAGS="$KLAATU_LDFLAGS_ORIG -lglib-2.0 "
 # bfd needs more explicit libs added
 export LDFLAGS="$KLAATU_LDFLAGS_ORIG -lglib-2.0 -lintl -liconv -lGLESv2 -llog -lcutils -lEGL -lutils -lGLES_trace -lcorkscrew -lz -lstlport -lgccdemangle"
+export LD_LIBRARY_PATH=""
 # needs to be autoreconfed since one of the patches is to an ac file.
 buildTryAutoreconf  cairo-1.12.8 " --enable-tee  --enable-glesv2 --with-x=no --enable-xlib=no --enable-xcb=no"
 
@@ -434,10 +462,9 @@ export CXXFLAGS="$KLAATU_CXXFLAGS_ORIG "
 #export LDFLAGS="$KLAATU_LDFLAGS_ORIG"
 export LDFLAGS="$KLAATU_LDFLAGS_ORIG -lglib-2.0 -lintl -liconv -lGLESv2 -llog -lcutils -lEGL -lutils -lGLES_trace -lcorkscrew -lz -lstlport -lgccdemangle"
 export PATH="$PATH:${ANDROID_BUILD_TOP}/usr/local/bin"
-export LD_LIBRARY_PATH="${ANDROID_BUILD_TOP}/usr/local/lib:${ANDROID_BUILD_TOP}/usr/lib:${ANDROID_NDK_TOP}/sources/cxx-stl/gnu-libstdc++/4.6/libs/armeabi-v7a"
 buildTryNoreconf harfbuzz-0.9.6 
 export PATH=$KLAATU_PATH_ORIG
-export LD_LIBRARY_PATH_ORIG=$KLAATU_LD_LIBRARY_PATH_ORIG
+
 
 
 # libsoup-2.39.4.1
@@ -446,11 +473,11 @@ export CXXFLAGS="$KLAATU_CXXFLAGS_ORIG "
 # this works for the gold linker but bnot for bfd
 #export LDFLAGS="$KLAATU_LDFLAGS_ORIG"
 export LDFLAGS="$KLAATU_LDFLAGS_ORIG  -lglib-2.0 -lintl -liconv -lgthread-2.0 -lgmodule-2.0 -lffi  -lz"
+export LD_LIBRARY_PATH="$KLAATU_LD_LIBRARY_PATH_ORIG"
 export PATH="$PATH:${ANDROID_BUILD_TOP}/usr/local/bin"
-export LD_LIBRARY_PATH="${ANDROID_BUILD_TOP}/usr/local/lib:${ANDROID_BUILD_TOP}/usr/lib:${ANDROID_NDK_TOP}/sources/cxx-stl/gnu-libstdc++/4.6/libs/armeabi-v7a"
 buildTryNoreconf libsoup-2.39.4.1 "--disable-silent-rules --disable-introspection --without-gnome"
 export PATH=$KLAATU_PATH_ORIG
-export LD_LIBRARY_PATH_ORIG=$KLAATU_LD_LIBRARY_PATH_ORIG
+
 
 
 # webkitgtk-test-fonts-0.0.3
@@ -458,6 +485,7 @@ export LD_LIBRARY_PATH_ORIG=$KLAATU_LD_LIBRARY_PATH_ORIG
 export CFLAGS="$KLAATU_CFLAGS_ORIG  "
 export CXXFLAGS="$KLAATU_CXXFLAGS_ORIG "
 export LDFLAGS="$KLAATU_LDFLAGS_ORIG"
+export LD_LIBRARY_PATH=""
 echo "**** Working on webkitgtk-test-fonts-0.0.3 ****"
 cd $KLAATU_BUILDDIR
 untarTry webkitgtk-test-fonts-0.0.3
@@ -473,7 +501,7 @@ export CXXFLAGS="$KLAATU_CXXFLAGS_ORIG "
 export LDFLAGS="$KLAATU_LDFLAGS_ORIG  -lglib-2.0 -lintl -liconv -lgthread-2.0 -lgmodule-2.0 -lffi  -lz"
 buildTryNoreconf shared-mime-info-1.1 "--disable-silent-rules --disable-nls --disable-update-mimedb"
 export PATH=$KLAATU_PATH_ORIG
-export LD_LIBRARY_PATH_ORIG=$KLAATU_LD_LIBRARY_PATH_ORIG
+
 
 # ca-certs
 # talk about hacks.  this is just swiped from an Ubuntu 12.04 workstation.

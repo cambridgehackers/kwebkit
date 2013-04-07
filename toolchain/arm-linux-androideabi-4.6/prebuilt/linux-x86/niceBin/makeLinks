@@ -1,0 +1,8 @@
+#!/bin/sh
+
+for i in ../bin/*; do 
+    Q=`basename $i`; 
+    echo $Q;
+    echo ${Q##arm-linux-androideabi-}; 
+    ln -s $i arm-linux-${Q##arm-linux-androideabi-}; 
+done
