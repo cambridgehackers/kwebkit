@@ -1,4 +1,5 @@
-export CFLAGS="-g -O0 \
+# if you want to gdb the build add -O0 to CFLAGS and CXXFLAGS
+export CFLAGS="-g  \
 -DKLAATU  \
 -DUSE_ARM_NEON -DUSE_ARM_SIMD \
 -march=armv7-a  -mfpu=neon -msoft-float -mthumb \
@@ -10,7 +11,7 @@ export CFLAGS="-g -O0 \
 -D__STDC_INT64__"
 
 
-export CXXFLAGS="-frtti  -g -O0 \
+export CXXFLAGS="-frtti  -g  \
 -DKLAATU  \
 -DUSE_ARM_NEON -DUSE_ARM_SIMD \
 -march=armv7-a  -mfpu=neon -msoft-float -mthumb \
@@ -25,11 +26,16 @@ export CXXFLAGS="-frtti  -g -O0 \
 -DU_USING_ICU_NAMESPACE=0 \
 -D__STDC_INT64__"
 
-# this is unlnown to arm-4.6 ndk gcc, sigh . -Wl,--reduce-memory-overheads \
-# turns out gold doesn't know it but bfd does
-# bfd requires we add -lm and -lstdc++...
+
+# the bfd linker is able to link the HUGE -O0 -g 
+# version of webkit if you want to gdb it.
+# gold (as of ndk r8d) was not
+#So for bfd linker we need to add :
+#-lm \
+#-lz \
+#-lstdc++ \
+
 export LDFLAGS=" \
--Wl,--reduce-memory-overheads \
 -Wl,--no-keep-memory \
 -Wl,--gc-sections -Wl,-z,nocopyreloc \
 -Wl,--no-undefined -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now \
@@ -38,6 +44,7 @@ export LDFLAGS=" \
 -L${ANDROID_NDK_TOP}/sources/cxx-stl/gnu-libstdc++/4.6/libs/armeabi-v7a \
 -lgnustl_shared \
 -lm \
+-lz \
 -lstdc++ \
 -g "
 
