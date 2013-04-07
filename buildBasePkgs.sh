@@ -13,9 +13,57 @@ set -o pipefail
 
 export SCRIPT_DIR="$( cd "$( dirname "$0" )" && pwd )"
 
-# set this to what you want
-KLAATU_NUMJOBS="-j20"
-KLAATU_VERBOSE="V=1"
+
+# Argument = -n numJobs  -v -d
+
+usage()
+{
+cat <<EOF
+ EOF
+usage: $0 options
+
+This builds webkitnix and all of it's support libs
+
+OPTIONS:
+   -h      Show this message
+   -j      Num of Jobs to run make with aka -j12
+   -d      Debug
+   -v      Verbose
+EOF
+}
+
+
+KLAATU_NUMJOBS=-j`cat /proc/cpuinfo  | egrep processor | wc -l`
+KLAATU_DEBUG=
+KLAATU_VERBOSE=
+while getopts “hj:vd” OPTION
+do
+     case $OPTION in
+         h)
+             usage
+             exit 1
+             ;;
+         j)
+             KLAATU_NUMJOBS=-j${OPTARG}
+             ;;
+         d)
+             KLAATU_DEBUG=1
+             ;;
+         v)
+             KLAATU_VERBOSE=" V=1 VERBOSE=1 "
+             ;;
+         ?)
+             usage
+             exit
+             ;;
+     esac
+done
+
+if [[ -z $KLAATU_NUMJOBS ]] 
+then
+     usage
+     exit 1
+fi
 
 
 #
@@ -24,9 +72,6 @@ KLAATU_TOPDIR=$SCRIPT_DIR
 KLAATU_TMPDIR=`pwd`;
 KLAATU_SUPPORTDIR=$KLAATU_TOPDIR/support_files
 KLAATU_INFODIR=kwebkit_progress
-if [ "$1" != "" ]; then
-    KLAATU_TMPDIR=`readlink -f $1`
-fi
 KLAATU_BUILDDIR=$KLAATU_TMPDIR/kwebkit_build_dir
 KLAATU_SRCDIR=$KLAATU_TMPDIR/kwebkit_src_downloads
 KLAATU_PATCHDIR=$KLAATU_TOPDIR/patches
@@ -134,12 +179,18 @@ function buildWebKitNix {
     # comment out the following line if you are using the bfd linker rather than 
     # the std gold linker. You only need to do this if building webkitnix
     # -O0 -g
-    sed -i.001 -e "s/-Wl,--reduce-memory-overheads//" override.cmake
+    #sed -i.001 -e "s/-Wl,--reduce-memory-overheads//" override.cmake
     echo "**** Working on $KLAATU_LOCAL_PKG ****"
     mkdir -p WebKitBuild/kwebkit
     # for debugging issues
     #printenv | tee WebKitBuild/kwebkit/kwebkit_env_used_to_build
+if [ ! -z $KLAATU_DEBUG ]; then
+    echo "Making the VERY LARGE debug version of webkit"
+    cmdTryDeluxe cmake_webkitnix_build_cmd_debug $KLAATU_LOCAL_PKG_BUILDDIR  "" cmake
+else
     cmdTryDeluxe cmake_webkitnix_build_cmd $KLAATU_LOCAL_PKG_BUILDDIR  "" cmake
+fi 
+
     cmdTryDeluxe make $KLAATU_LOCAL_PKG_BUILDDIR "${KLAATU_NUMJOBS} ${KLAATU_VERBOSE}" make
     rsync -a bin/ ${ANDROID_BUILD_TOP}/usr/local/bin/
     rsync -a lib/ ${ANDROID_BUILD_TOP}/usr/local/lib/
@@ -310,7 +361,11 @@ KLAATU_CXXFLAGS_ORIG=$CXXFLAGS
 KLAATU_LDFLAGS_ORIG=$LDFLAGS
 KLAATU_PATH_ORIG=$PATH
 KLAATU_LD_LIBRARY_PATH_ORIG=${ANDROID_BUILD_TOP}/usr/local/lib:${ANDROID_BUILD_TOP}/usr/lib
-
+if [ ! -z $KLAATU_DEBUG ]; then
+    echo "Making the VERY LARGE debug version"
+    KLAATU_CFLAGS_ORIG="$CFLAGS -g -O0"
+    KLAATU_CXXFLAGS_ORIG="$CXXFLAGS -g -O0"
+fi 
 
 export LD_LIBRARY_PATH="$KLAATU_LD_LIBRARY_PATH_ORIG"
 #  libpng
