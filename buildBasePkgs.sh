@@ -347,7 +347,7 @@ if [ ! -e  ${ANDROID_BUILD_TOP}/usr/local/lib/libgnustl_shared.so ]; then
     echo "copying in the needed c++ runtime library libgnustl_shared.so from the NDK"
     echo "we are using the sources/cxx-stl/gnu-libstdc++/4.6/libs/armeabi-v7a/libgnustl_shared.so version"
     mkdir -p ${ANDROID_BUILD_TOP}/usr/local/lib/
-    cp ${ANDROID_NDK_TOP}/sources/cxx-stl/gnu-libstdc++/4.6/libs/armeabi-v7a/libgnustl_shared.so ${ANDROID_BUILD_TOP}/usr/local/lib/
+    cp -v ${ANDROID_NDK_TOP}/sources/cxx-stl/gnu-libstdc++/4.6/libs/armeabi-v7a/libgnustl_shared.so ${ANDROID_BUILD_TOP}/usr/local/lib/
 fi
 
 mkdir -p $KLAATU_BUILDDIR
