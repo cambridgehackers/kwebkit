@@ -21,9 +21,10 @@ mount -o rw,remount /system
 mkdir -p /home/bavery/work/pandroid/sigynPostAndy/ndk_webkit_build/
 cd /home/bavery/work/pandroid/sigynPostAndy/ndk_webkit_build/
 ln -s /data/usr/webkit-nix/ .
-mkdir -p  /home/bavery/work/pandroid/sigynPostAndy/ndk_webkit_build/webkit-nix/WebKitBuild/ByHand.kwebkit/ 
-cd  /home/bavery/work/pandroid/sigynPostAndy/ndk_webkit_build/webkit-nix/WebKitBuild/ByHand.kwebkit/
-ln -s /data/usr/local/lib/ .
+# need to fix this in the nix source not patch it here.
+#mkdir -p  /home/bavery/work/pandroid/sigynPostAndy/ndk_webkit_build/webkit-nix/WebKitBuild/ByHand.kwebkit/ 
+#cd  /home/bavery/work/pandroid/sigynPostAndy/ndk_webkit_build/webkit-nix/WebKitBuild/ByHand.kwebkit/
+#ln -s /data/usr/local/lib/ .
 cd /system/etc
 ln -s /data/usr/local/etc/ssl .
 
