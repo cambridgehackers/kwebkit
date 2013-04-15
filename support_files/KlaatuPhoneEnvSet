@@ -33,6 +33,7 @@ mkdir -p /usr/share
 mkdir -p /data/usr/local/share/mime
 cd /usr/share
 ln -s /data/usr/local/share/mime .
+/data/usr/local/bin/update-mime-database /data/usr/local/share/mime
 
 echo "setting up theca-certificates cross link"
 mkdir -p /usr/share
