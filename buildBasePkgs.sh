@@ -415,7 +415,7 @@ export CXXFLAGS="$KLAATU_CXXFLAGS_ORIG"
 export LDFLAGS="$KLAATU_LDFLAGS_ORIG"
 # needs freetype-config
 export PATH="$PATH:${ANDROID_BUILD_TOP}/usr/local/bin"
-buildTry fontconfig-2.8.0  " --with-arch=arm --with-cache-dir=/data/usr/local/fontconfig-cache --with-default-fonts=/data/usr/local/share/fonts"
+buildTry fontconfig-2.8.0  " --with-arch=arm --with-cache-dir=${ANDROID_BUILD_TOP}/usr/local/fontconfig-cache --with-default-fonts=${ANDROID_BUILD_TOP}/usr/local/share/fonts"
 
 # libffi
 export CFLAGS="$KLAATU_CFLAGS_ORIG "
